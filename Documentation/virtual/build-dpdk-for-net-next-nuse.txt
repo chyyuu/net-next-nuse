@@ -1,0 +1,23 @@
+git clone dpdk
+checkout 2.2.0
+
+export RTE_SDK=/home/os/chy/net-next-nuse/arch/lib/tools/dpdk
+export RTE_TARGET=build
+cd dpdk
+make -j1 CONFIG_RTE_LIBRTE_ETHDEV_DEBUG=y T=x86_64-native-linuxapp-gcc config
+cd build
+make CONFIG_RTE_BUILD_COMBINE_LIBS=y EXTRA_CFLAGS="-fPIC -g"
+
+then
+
+cd net-next-nuse
+make defconfig ARCH=lib
+make library ARCH=lib OPT=no DPDK=yes
+
+fix for dpdk v2.2.0
+linux-libos-tools 
+
+Makefile.dpdk
+nuse-vif-dpdk.c
+
+
