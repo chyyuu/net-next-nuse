@@ -14,10 +14,73 @@ cd net-next-nuse
 make defconfig ARCH=lib
 make library ARCH=lib OPT=no DPDK=yes
 
-fix for dpdk v2.2.0
-linux-libos-tools 
+#fix for dpdk v2.2.0
+cd linux-libos-tools 
 
 Makefile.dpdk
 nuse-vif-dpdk.c
+
+
+
+#setup dpdk
+cd dpdk
+sudo modprobe uio
+sudo insmod kmod/igb_uio.ko
+
+./tools/setup.sh
+# setup hugepage
+[22] Display current Ethernet device settings
+
+Option: 22
+
+
+Network devices using DPDK-compatible driver
+============================================
+<none>
+
+Network devices using kernel driver
+===================================
+0000:00:1f.6 'Ethernet Connection (2) I219-V' if=enp0s31f6 drv=e1000e unused=igb_uio *Active*
+0000:04:00.0 '82599ES 10-Gigabit SFI/SFP+ Network Connection' if=enp4s0f0 drv=ixgbe unused=igb_uio 
+0000:04:00.1 '82599ES 10-Gigabit SFI/SFP+ Network Connection' if=enp4s0f1 drv=ixgbe unused=igb_uio 
+
+Other network devices
+=====================
+<none>
+
+[23] Bind Ethernet device to IGB UIO module
+
+Option: 23
+
+
+Network devices using DPDK-compatible driver
+============================================
+
+Network devices using kernel driver
+===================================
+0000:00:1f.6 'Ethernet Connection (2) I219-V' if=enp0s31f6 drv=e1000e unused=igb_uio *Active*
+0000:04:00.0 '82599ES 10-Gigabit SFI/SFP+ Network Connection' if=enp4s0f0 drv=ixgbe unused=igb_uio 
+0000:04:00.1 '82599ES 10-Gigabit SFI/SFP+ Network Connection' if=enp4s0f1 drv=ixgbe unused=igb_uio 
+
+Other network devices
+=====================
+<none>
+
+Enter PCI address of device to bind to IGB UIO driver: 0000:04:00.0
+
+#run
+cd /home/os/chy/net-next-nuse/arch/lib/tools
+NUSECONF=nuse-dpdk.conf  LD_LIBRARY_PATH=.:../../../ LD_PRELOAD=liblinux.so:libnuse-linux.so ping 172.16.0.2
+
+#run memcached
+NUSECONF=nuse-dpdk.conf  LD_LIBRARY_PATH=.:../../../ LD_PRELOAD=liblinux.so:libnuse-linux.so ./memcached -m 128 -l 172.16.0.1 -p 11211 -u root
+
+core dump
+
+通过 ulimit 命令来修改core文件的大小，unlimited表示不限制core文件的大小
+ulimit -c unlimited
+
+可以运行，只用了一个thread，当接收处理有问题
+NUSECONF=nuse-dpdk.conf  LD_LIBRARY_PATH=.:../../../ LD_PRELOAD=liblinux.so:libnuse-linux.so ./memcached -m 128 -l 172.16.0.1 -p 11211 -u root -t 1
 
 
